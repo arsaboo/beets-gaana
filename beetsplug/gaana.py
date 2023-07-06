@@ -43,7 +43,6 @@ class GaanaPlugin(BeetsPlugin):
         })
         try:
             self.baseurl = self.config["baseurl"].as_str()
-            print(self.baseurl)
         except Exception as e:
             self._log.error('Gaana baseurl not set: {}'.format(e))
 
@@ -79,8 +78,9 @@ class GaanaPlugin(BeetsPlugin):
         # can also negate an otherwise positive result.
         query = re.sub(r'(?i)\b(CD|disc)\s*\d+', '', query)
         albums = []
-        self._log.debug('Searching Gaana for: {}', query)
+        self._log.debug('Searching Gaana for Album: {}', query)
         url = f"{self.baseurl}{self.ALBUM_SEARCH}{query}"
+        print(url)
         try:
             albums = requests.get(url, timeout=30).json()
         except Exception as e:
