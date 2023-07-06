@@ -82,7 +82,7 @@ class GaanaPlugin(BeetsPlugin):
         url = f"{self.baseurl}{self.ALBUM_SEARCH}\"{query}\""
         try:
             albums = requests.get(url, timeout=30).json()
-            print(albums)
+            print(albums[0])
         except Exception as e:
             self._log.debug('Album Search Error: {}'.format(e))
         for album in albums[0]:
