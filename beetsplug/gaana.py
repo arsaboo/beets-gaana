@@ -79,7 +79,7 @@ class GaanaPlugin(BeetsPlugin):
         query = re.sub(r'(?i)\b(CD|disc)\s*\d+', '', query)
         albums = []
         self._log.debug('Searching Gaana for: {}', query)
-        url = self.baseurl + self.ALBUM_SEARCH + query
+        url = f"{self.baseurl}{self.ALBUM_SEARCH}{query}"
         try:
             albums = requests.get(url, timeout=30).json()
         except Exception as e:
@@ -87,7 +87,7 @@ class GaanaPlugin(BeetsPlugin):
         for album in albums:
             self._log.debug('Album: {}', album["title"])
             seokey = album["seokey"]
-            album_url = self.baseurl + self.ALBUM_DETAILS + seokey
+            album_url = f"{self.baseurl}{self.ALBUM_DETAILS}{seokey}"
             album_details = requests.get(album_url, timeout=30).json()
             album_info = self.get_album_info(album_details[0])
             albums.append(album_info)
@@ -229,7 +229,7 @@ class GaanaPlugin(BeetsPlugin):
             return None
         self._log.debug('Searching for album {0}', release_id)
         seokey = release_id.split("/")[-1]
-        album_url = self.baseurl + self.ALBUM_DETAILS + seokey
+        album_url = f"{self.baseurl}{self.ALBUM_DETAILS}{seokey}"
         album_details = requests.get(album_url, timeout=30).json()
         return self.get_album_info(album_details[0])
 
@@ -239,8 +239,8 @@ class GaanaPlugin(BeetsPlugin):
         if 'gaana.com/song/' not in track_id:
             return None
         self._log.debug('Searching for track {0}', track_id)
-        seokey = release_id.split("/")[-1]
-        song_url = self.baseurl + self.SONG_DETAILS + seokey
+        seokey = track_id.split("/")[-1]
+        song_url = f"{self.baseurl}{self.SONG_DETAILS}{seokey}"
         song_details = requests.get(song_url, timeout=30).json()
         return self._get_track(song_details[0])
 
