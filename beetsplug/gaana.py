@@ -79,7 +79,7 @@ class GaanaPlugin(BeetsPlugin):
         query = re.sub(r'(?i)\b(CD|disc)\s*\d+', '', query)
         albums = []
         self._log.debug('Searching Gaana for Album: {}', query)
-        url = f"{self.baseurl}{self.ALBUM_SEARCH}{query}"
+        url = f"{self.baseurl}{self.ALBUM_SEARCH}\"{query}\""
         print(url)
         try:
             albums = requests.get(url, timeout=30).json()
