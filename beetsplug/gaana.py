@@ -44,7 +44,7 @@ class GaanaPlugin(BeetsPlugin):
         try:
             self.baseurl = self.config["baseurl"].as_str_seq()
         except Exception as e:
-            self._log.error('Gaana baseurl not set: {}'.format(e))"
+            self._log.error('Gaana baseurl not set: {}'.format(e))
 
     def album_distance(self, items, album_info, mapping):
 
