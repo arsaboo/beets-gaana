@@ -87,7 +87,7 @@ class GaanaPlugin(BeetsPlugin):
         for album in albums:
             self._log.debug('Album: {}', album["title"])
             seokey = album["seokey"]
-            album_url = f"{self.baseurl}{self.ALBUM_DETAILS}\"{seokey}\""
+            album_url = f"{self.baseurl}{self.ALBUM_DETAILS}{seokey}"
             print(album_url)
             album_details = requests.get(album_url, timeout=30).json()
             print(album_details)
