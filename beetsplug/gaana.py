@@ -88,7 +88,6 @@ class GaanaPlugin(BeetsPlugin):
             self._log.debug('Album: {}', album["title"])
             seokey = album["seokey"]
             album_url = f"{self.baseurl}{self.ALBUM_DETAILS}{seokey}"
-            print(album_url)
             album_details = requests.get(album_url, timeout=30).json()
             print(album_details)
             album_info = self.get_album_info(album_details[0])
@@ -147,6 +146,7 @@ class GaanaPlugin(BeetsPlugin):
     def get_album_info(self, item):
         """Returns an AlbumInfo object for a Gaana album.
         """
+        print(item)
         album = item["title"].replace("&quot;", "\"")
         gaana_album_id = item["album_id"]
         gaana_seokey = item["seokey"]
