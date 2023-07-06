@@ -43,6 +43,7 @@ class GaanaPlugin(BeetsPlugin):
         })
         try:
             self.baseurl = self.config["baseurl"].as_str()
+            print(self.baseurl)
         except Exception as e:
             self._log.error('Gaana baseurl not set: {}'.format(e))
 
