@@ -85,7 +85,7 @@ class GaanaPlugin(BeetsPlugin):
             print(albums)
         except Exception as e:
             self._log.debug('Album Search Error: {}'.format(e))
-        for album in albums:
+        for album in albums[0]:
             self._log.debug('Album: {}', album["title"])
             seokey = album["seokey"]
             album_url = f"{self.baseurl}{self.ALBUM_DETAILS}{seokey}"
