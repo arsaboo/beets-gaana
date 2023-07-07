@@ -183,6 +183,8 @@ class GaanaPlugin(BeetsPlugin):
         url = item["images"]["urls"]["large_artwork"]
         if self.is_valid_image_url(url):
             cover_art_url = url
+        else:
+            cover_art_url = None
         if item["label"] is not None:
             label = item["label"]
         artists = item["artists"]
@@ -277,13 +279,14 @@ class GaanaPlugin(BeetsPlugin):
     def track_for_id(self, track_id=None):
         """Fetches a track by its Gaana ID and returns a TrackInfo object
         """
-        if 'gaana.com/song/' not in track_id:
+        if track_id is not None and 'gaana.com/song/' in track_id:
+            self._log.debug('Searching for track {0}', track_id)
+            seokey = track_id.split("/")[-1]
+            song_url = f"{self.baseurl}{self.SONG_DETAILS}{seokey}"
+            song_details = requests.get(song_url, timeout=30).json()
+            return self._get_track(song_details[0])
+        else:
             return None
-        self._log.debug('Searching for track {0}', track_id)
-        seokey = track_id.split("/")[-1]
-        song_url = f"{self.baseurl}{self.SONG_DETAILS}{seokey}"
-        song_details = requests.get(song_url, timeout=30).json()
-        return self._get_track(song_details[0])
 
     def is_valid_image_url(self, url):
         try:
@@ -294,7 +297,8 @@ class GaanaPlugin(BeetsPlugin):
             return False
 
     def parse_count(self, str) -> int:
-        # this function parses the play count from the string. The string usually has numbers such as 55K+ or 1.2M+ or <100
+        # this function parses the play count from the string.
+        # The string usually has numbers such as 55K+ or 1.2M+ or <100
         # this function converts the string to an integer
         if str is None:
             return 0
