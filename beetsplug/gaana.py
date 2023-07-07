@@ -206,6 +206,7 @@ class GaanaPlugin(BeetsPlugin):
         if isinstance(track_data['favorite_count'], int):
             gaana_track_fav_count = track_data['favorite_count']
         else:
+            self._log.debug(f"parsing {track_data['favorite_count']}")
             gaana_track_fav_count = self.parse_count(track_data['favorite_count'])
         # Get album information for Gaana tracks
         return TrackInfo(
