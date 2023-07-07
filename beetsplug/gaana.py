@@ -261,7 +261,7 @@ class GaanaPlugin(BeetsPlugin):
         # this function converts the string to an integer
         if str is None:
             return 0
-        if str[1] == '<':
+        if str[0] == '<':
             str = str[1:]
         if str[-1] == '+':
             str = str[:-1]
