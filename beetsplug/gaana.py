@@ -145,18 +145,15 @@ class GaanaPlugin(BeetsPlugin):
     def get_album_info(self, item):
         """Returns an AlbumInfo object for a Gaana album.
         """
-        print(item)
         album = item["title"].replace("&quot;", "\"")
         gaana_album_id = item["album_id"]
         gaana_seokey = item["seokey"]
-        print(gaana_seokey)
         if item["release_date"] is not None:
             releasedate = item["release_date"].split("-")
             year = int(releasedate[0])
             month = int(releasedate[1])
             day = int(releasedate[2])
         url = item["images"]["urls"]["large_artwork"]
-        print(url)
         if self.is_valid_image_url(url):
             cover_art_url = url
         if item["label"] is not None:
@@ -166,9 +163,7 @@ class GaanaPlugin(BeetsPlugin):
         artist_id = item["artist_ids"]
         songs = item["tracks"]
         gaana_play_count = self.parse_count(item["play_count"])
-        print(gaana_play_count)
         gaana_fav_count = self.parse_count(item["favorite_count"])
-        print(gaana_fav_count)
         tracks = []
         medium_totals = collections.defaultdict(int)
         for i, song in enumerate(songs, start=1):
@@ -203,6 +198,7 @@ class GaanaPlugin(BeetsPlugin):
         """
         if track_data['duration']:
             length = int(track_data['duration'].strip())
+        print(track_data)
         artist = track_data['artists']
         if track_data['popularity']:
             play_count = int(track_data['popularity'].split("~")[0])
