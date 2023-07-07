@@ -143,7 +143,7 @@ class GaanaPlugin(BeetsPlugin):
         try:
             return self.get_tracks(query)
         except Exception as e:
-            self._log.debug('Gaana Search Error: {}'.format(e))
+            self._log.debug('Gaana Item Search Error: {}'.format(e))
             return []
 
     def get_album_info(self, item):
