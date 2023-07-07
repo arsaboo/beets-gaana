@@ -166,7 +166,6 @@ class GaanaPlugin(BeetsPlugin):
         gaana_play_count = self.parse_count(item["play_count"])
         gaana_fav_count = self.parse_count(item["favorite_count"])
         tracks = []
-        print(f"len(songs): {len(songs)}")
         medium_totals = collections.defaultdict(int)
         for i, song in enumerate(songs, start=1):
             track = self._get_track(song)
@@ -175,6 +174,10 @@ class GaanaPlugin(BeetsPlugin):
             tracks.append(track)
         for track in tracks:
             track.medium_total = medium_totals[track.medium]
+        if len(songs) > 0:
+            mediums = max(medium_totals.keys())
+        else:
+            mediums = 0
         return AlbumInfo(album=album,
                          album_id=gaana_album_id,
                          gaana_album_id=gaana_album_id,
@@ -187,7 +190,7 @@ class GaanaPlugin(BeetsPlugin):
                          year=year,
                          month=month,
                          day=day,
-                         mediums=max(medium_totals.keys()),
+                         mediums=mediums,
                          data_source=self.data_source,
                          cover_art_url=cover_art_url,
                          label=label,
