@@ -221,7 +221,7 @@ class GaanaPlugin(BeetsPlugin):
             gaana_track_fav_count = self.parse_count(track_data['favorite_count'])
         # Get album information for Gaana tracks
         return TrackInfo(
-            title=track_data['title'].replace("&quot;", "\""),
+            title=track_data.get('title').replace("&quot;", "\""),
             track_id=track_data['track_id'],
             gaana_track_id=track_data['track_id'],
             gaana_track_seokey=track_data['seokey'],
