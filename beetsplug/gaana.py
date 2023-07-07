@@ -136,7 +136,10 @@ class GaanaPlugin(BeetsPlugin):
         """Returns a list of TrackInfo objects for Gaana search results
         matching title and artist.
         """
-        query = f'{title} {artist}'
+        try:
+            query = f'{title} {artist}'
+        except:
+            return []
         try:
             return self.get_tracks(query)
         except Exception as e:
