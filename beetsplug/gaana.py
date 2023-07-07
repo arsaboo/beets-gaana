@@ -89,7 +89,6 @@ class GaanaPlugin(BeetsPlugin):
             seokey = album["seokey"]
             album_url = f"{self.baseurl}{self.ALBUM_DETAILS}{seokey}"
             album_details = requests.get(album_url, timeout=30).json()
-            print(album_details)
             album_info = self.get_album_info(album_details[0])
             albums.append(album_info)
         return albums
@@ -106,15 +105,18 @@ class GaanaPlugin(BeetsPlugin):
         # can also negate an otherwise positive result.
         query = re.sub(r'(?i)\b(CD|disc)\s*\d+', '', query)
         tracks = []
-        self._log.debug('Searching Gaana for: {}', query)
+        self._log.debug('Searching Gaana for track: {}', query)
+        url = f"{self.baseurl}{self.SONG_SEARCH}\"{query}\""
         try:
-            data = self.jiosaavn.search_song(query)
+            data = requests.get(url, timeout=30).json()
         except Exception as e:
-            self._log.debug('Invalid Search Error: {}'.format(e))
-        for track in data["results"]:
-            id = self.jiosaavn.create_identifier(track["perma_url"], 'song')
-            song_details = self.jiosaavn.get_song_details(id)
-            song_info = self._get_track(song_details["songs"][0])
+            self._log.debug('Invalid track Search Error: {}'.format(e))
+        for track in data:
+            seokey = track["seokey"]
+            song_url = f"{self.baseurl}{self.SONG_DETAILS}{seokey}"
+            song_details = requests.get(song_url, timeout=30).json()
+            self._log.debug('Track: {}', song_details)
+            song_info = self._get_track(song_details[0])
             tracks.append(song_info)
         return tracks
 
