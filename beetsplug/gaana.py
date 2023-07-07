@@ -208,8 +208,6 @@ class GaanaPlugin(BeetsPlugin):
         else:
             gaana_track_fav_count = self.parse_count(track_data['favorite_count'])
         # Get album information for Gaana tracks
-        print(gaana_track_fav_count)
-
         return TrackInfo(
             title=track_data['title'].replace("&quot;", "\""),
             track_id=track_data['track_id'],
@@ -258,10 +256,12 @@ class GaanaPlugin(BeetsPlugin):
             return False
 
     def parse_count(self, str) -> int:
-        # this function parses the play count from the string. The string usually has numbers such as 55K+ or 1.2M+
+        # this function parses the play count from the string. The string usually has numbers such as 55K+ or 1.2M+ or <100
         # this function converts the string to an integer
         if str is None:
             return 0
+        if str[1] == '<':
+            str = str[1:]
         if str[-1] == '+':
             str = str[:-1]
         if str[-1] == 'K':
