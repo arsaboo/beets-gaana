@@ -29,7 +29,7 @@ class GaanaPlugin(BeetsPlugin):
     }
 
     SONG_SEARCH = '/songs/search?query='
-    ALBUM_SEARCH = '/albums/search?query='
+    ALBUM_SEARCH = '/albums/search?limit=5&query='
     ARTIST_SEARCH = '/artists/search?query='
     SONG_DETAILS = '/songs/info?seokey='
     ALBUM_DETAILS = '/albums/info?seokey='
