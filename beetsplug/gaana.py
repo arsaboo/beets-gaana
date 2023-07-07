@@ -197,14 +197,14 @@ class GaanaPlugin(BeetsPlugin):
         """Convert a Gaana song object to a TrackInfo object.
         """
         if track_data['duration']:
-            length = int(track_data['duration'].strip())            
+            length = int(track_data['duration'].strip())
         artist = track_data['artists']
         if track_data['popularity']:
             play_count = int(track_data['popularity'].split("~")[0])
         elif track_data['play_count']:
             play_count = self.parse_count(track_data['play_count'])
-        print(play_count)
         # Get album information for Gaana tracks
+        print(track_data['genres'])
         return TrackInfo(
             title=track_data['title'].replace("&quot;", "\""),
             track_id=track_data['track_id'],
