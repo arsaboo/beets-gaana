@@ -84,14 +84,14 @@ class GaanaPlugin(BeetsPlugin):
             albums = requests.get(url, timeout=30).json()
         except Exception as e:
             self._log.debug('Album Search Error: {}'.format(e))
-        for album in albums:
-            self._log.debug('Album: {}', album["title"])
+        for i, album in enumerate(albums):
+            self._log.debug('Processing album {} of {}: {}'.format(i+1, len(albums), album["title"]))
             seokey = album["seokey"]
             album_url = f"{self.baseurl}{self.ALBUM_DETAILS}{seokey}"
             album_details = requests.get(album_url, timeout=30).json()
             album_info = self.get_album_info(album_details[0])
-            self._log.debug('Album: {}', album_info)
             albums.append(album_info)
+            self._log.debug('Album processed: {}', album_info)
         return albums
 
     def get_tracks(self, query):
@@ -112,13 +112,15 @@ class GaanaPlugin(BeetsPlugin):
             data = requests.get(url, timeout=30).json()
         except Exception as e:
             self._log.debug('Invalid track Search Error: {}'.format(e))
-        for track in data:
+        for i, track in enumerate(data):
+            self._log.debug('Processing track {} of {}: {}'.format(i+1, len(data), track["title"]))
             seokey = track["seokey"]
             song_url = f"{self.baseurl}{self.SONG_DETAILS}{seokey}"
             song_details = requests.get(song_url, timeout=30).json()
             self._log.debug('Track: {}', song_details)
             song_info = self._get_track(song_details[0])
             tracks.append(song_info)
+            self._log.debug('Track processed: {}', song_info)
         return tracks
 
     def candidates(self, items, artist, release, va_likely, extra_tags=None):
