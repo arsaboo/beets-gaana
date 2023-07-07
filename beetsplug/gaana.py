@@ -151,7 +151,7 @@ class GaanaPlugin(BeetsPlugin):
     def get_album_info(self, item):
         """Returns an AlbumInfo object for a Gaana album.
         """
-        album = item["title"].replace("&quot;", "\"")
+        album = item.get("title").replace("&quot;", "\"")
         gaana_album_id = item["album_id"]
         gaana_seokey = item["seokey"]
         if item["release_date"] is not None:
