@@ -89,7 +89,6 @@ class GaanaPlugin(BeetsPlugin):
             seokey = album["seokey"]
             album_url = f"{self.baseurl}{self.ALBUM_DETAILS}{seokey}"
             album_details = requests.get(album_url, timeout=30).json()
-            print(album_details)
             album_info = self.get_album_info(album_details[0])
             albums.append(album_info)
         return albums
@@ -155,7 +154,6 @@ class GaanaPlugin(BeetsPlugin):
             year = int(releasedate[0])
             month = int(releasedate[1])
             day = int(releasedate[2])
-        year = item["year"]
         url = item["images"]["urls"]["large_artwork"]
         if self.is_valid_image_url(url):
             cover_art_url = url
