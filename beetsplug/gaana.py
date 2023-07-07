@@ -204,18 +204,6 @@ class GaanaPlugin(BeetsPlugin):
         elif track_data['play_count']:
             play_count = self.parse_count(track_data['play_count'])
         # Get album information for Gaana tracks
-
-        print(track_data['title'].replace("&quot;", "\""))
-        print(track_data['track_id'])
-        print(track_data['seokey'])
-        print(play_count)
-        print(track_data['genres'])
-        print(artist)
-        print(track_data['album'].replace("&quot;", "\""))
-        print(track_data["artist_ids"])
-        print(track_data["artist_seokeys"])
-        print(length)
-        print(self.data_source)
         print(self.parse_count(track_data['favorite_count']))
 
         return TrackInfo(
