@@ -168,6 +168,7 @@ class GaanaPlugin(BeetsPlugin):
         gaana_play_count = self.parse_count(item["play_count"])
         print(gaana_play_count)
         gaana_fav_count = self.parse_count(item["favorite_count"])
+        print(gaana_fav_count)
         tracks = []
         medium_totals = collections.defaultdict(int)
         for i, song in enumerate(songs, start=1):
