@@ -86,13 +86,16 @@ class GaanaPlugin(BeetsPlugin):
             self._log.debug('Album Search Error: {}'.format(e))
         tot_alb = len(albums)
         for i, album in enumerate(albums):
-            self._log.debug('Processing album {} of {}: {}'.format(i+1, tot_alb, album["title"]))
             seokey = album["seokey"]
             album_url = f"{self.baseurl}{self.ALBUM_DETAILS}{seokey}"
             album_details = requests.get(album_url, timeout=30).json()
             album_info = self.get_album_info(album_details[0])
             albums.append(album_info)
-            self._log.debug('Album processed: {}', album_info)
+            self._log.debug(
+                'Processed album {} of {}: {}'.format(i+1,
+                                                      tot_alb,
+                                                      album["title"]))
+        print(albums)
         return albums
 
     def get_tracks(self, query):
@@ -115,14 +118,16 @@ class GaanaPlugin(BeetsPlugin):
             self._log.debug('Invalid track Search Error: {}'.format(e))
         tot_trk = len(data)
         for i, track in enumerate(data):
-            self._log.debug('Processing track {} of {}: {}'.format(i+1, tot_trk, track["title"]))
             seokey = track["seokey"]
             song_url = f"{self.baseurl}{self.SONG_DETAILS}{seokey}"
             song_details = requests.get(song_url, timeout=30).json()
             self._log.debug('Track: {}', song_details)
             song_info = self._get_track(song_details[0])
             tracks.append(song_info)
-            self._log.debug('Track processed: {}', song_info)
+            self._log.debug(
+                'Processed track {} of {}: {}'.format(i+1,
+                                                      tot_trk,
+                                                      track["title"]))
         return tracks
 
     def candidates(self, items, artist, release, va_likely, extra_tags=None):
@@ -214,16 +219,21 @@ class GaanaPlugin(BeetsPlugin):
         """
         if track_data['duration']:
             length = int(track_data['duration'].strip())
+        else:
+            length = None
         artist = track_data['artists']
         if track_data['popularity']:
             play_count = int(track_data['popularity'].split("~")[0])
         elif track_data['play_count']:
             play_count = self.parse_count(track_data['play_count'])
+        else:
+            play_count = None
         if isinstance(track_data['favorite_count'], int):
             gaana_track_fav_count = track_data['favorite_count']
         else:
             print(f"parsing {track_data['favorite_count']}")
-            gaana_track_fav_count = self.parse_count(track_data['favorite_count'])
+            gaana_track_fav_count = self.parse_count(
+                track_data['favorite_count'])
         # Get album information for Gaana tracks
         return TrackInfo(
             title=track_data.get('title').replace("&quot;", "\""),
