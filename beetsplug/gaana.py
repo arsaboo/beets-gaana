@@ -8,11 +8,22 @@ import time
 from io import BytesIO
 
 import requests
+from beets import importer
 from beets.autotag.hooks import AlbumInfo, Distance, TrackInfo
 from beets.dbcore import types
 from beets.library import DateType
 from beets.plugins import BeetsPlugin, get_distance
 from PIL import Image
+
+
+def extend_reimport_fresh_fields_item():
+    """Extend the REIMPORT_FRESH_FIELDS_ITEM list so that these fields
+    are updated during reimport."""
+
+    importer.REIMPORT_FRESH_FIELDS_ITEM.extend([
+        'gaana_track_id', 'gaana_track_seokey', 'gaana_track_popularity',
+        'gaana_genres', 'gaana_track_fav_count', 'gaana_fav_count',
+        'gaana_track_popularity', 'gaana_updated'])
 
 
 class GaanaPlugin(BeetsPlugin):
