@@ -23,5 +23,5 @@ plugins: gaana
 This plugin requires the [GaanaPy](https://github.com/ZingyTomato/GaanaPy) library. See the link to configure the same. Once you have installed the library, add the baseurl in your config as below:
 ```yaml
 gaana:
-    baseurl: http:////192.168.2.60:8000
+    baseurl: http://192.168.2.60:8000
 ```
