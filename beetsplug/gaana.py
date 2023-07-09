@@ -320,12 +320,16 @@ class GaanaPlugin(BeetsPlugin):
         else:
             seokey = url.split("/")[-1]
             plst_url = f"{self.baseurl}{self.PLAYLIST_DETAILS}{seokey}"
-            songs = requests.get(plst_url, timeout=30).json()
+            try:
+                songs = requests.get(plst_url, timeout=30).json()
+            except Exception as e:
+                self._log.error("Error fetching playlist: {0}", e)
+                return song_list
             for song in songs:
                 # Find and store the song title
                 self._log.debug("Found song: {0}", song)
                 title = song['title'].replace("&quot;", "\"")
-                artist = song['artists'][0]['name'].replace("&quot;", "\"")
+                artist = song['artists']
                 album = song['album'].replace("&quot;", "\"")
                 # Create a dictionary with the song information
                 song_dict = {"title": title.strip(),
