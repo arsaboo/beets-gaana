@@ -20,10 +20,8 @@ Add `gaana` to your list of enabled plugins and configure the baseurl where the 
 plugins: gaana
 ```
 
-This plugin requires the [GaanaPy](gaanapy) library. See the link to configure the same. Once you have installed the library, add the baseurl in your config as below:
+This plugin requires the [GaanaPy](https://github.com/ZingyTomato/GaanaPy) library. See the link to configure the same. Once you have installed the library, add the baseurl in your config as below:
 ```yaml
 gaana:
     baseurl: http:////192.168.2.60:8000
 ```
-
-[gaanapy](https://github.com/ZingyTomato/GaanaPy)
