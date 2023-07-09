@@ -311,3 +311,30 @@ class GaanaPlugin(BeetsPlugin):
         if str[-1] == 'M':
             return int(float(str[:-1]) * 1000000)
         return int(str)
+
+    def import_gaana_playlist(self, url):
+        """This function returns a list of tracks in a Gaana playlist."""
+        song_list = []
+        if "/playlist/" not in url:
+            self._log.error("Invalid Gaana playlist URL: {0}", url)
+        else:
+            seokey = url.split("/")[-1]
+            plst_url = f"{self.baseurl}{self.PLAYLIST_DETAILS}{seokey}"
+            try:
+                songs = requests.get(plst_url, timeout=30).json()
+            except Exception as e:
+                self._log.error("Error fetching playlist: {0}", e)
+                return song_list
+            for song in songs:
+                # Find and store the song title
+                self._log.debug("Found song: {0}", song)
+                title = song['title'].replace("&quot;", "\"")
+                artist = song['artists']
+                album = song['album'].replace("&quot;", "\"")
+                # Create a dictionary with the song information
+                song_dict = {"title": title.strip(),
+                             "artist": artist.strip(),
+                             "album": album.strip()}
+                # Append the dictionary to the list of songs
+                song_list.append(song_dict)
+        return song_list
