@@ -14,8 +14,16 @@ Then, [configure](#configuration) the plugin in your
 
 ## Configuration
 
-Add `gaana` to your list of enabled plugins.
+Add `gaana` to your list of enabled plugins and configure the baseurl where the Gaana API is installed.
 
 ```yaml
 plugins: gaana
 ```
+
+This plugin requires the [GaanaPy][GaanaPy] library. See the link to configure the same. Once you have installed the library, add the baseurl in your config as below:
+```yaml
+gaana:
+    baseurl: http:////192.168.2.60:8000
+```
+
+[GaanaPy](https://github.com/ZingyTomato/GaanaPy)
