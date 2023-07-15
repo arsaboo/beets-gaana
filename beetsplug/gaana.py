@@ -12,7 +12,7 @@ from beets import importer
 from beets.autotag.hooks import AlbumInfo, Distance, TrackInfo
 from beets.dbcore import types
 from beets.library import DateType
-from beets.plugins import BeetsPlugin, get_distance
+from beets.plugins import BeetsPlugin, MetadataSourcePlugin, get_distance
 from PIL import Image
 
 
@@ -187,9 +187,10 @@ class GaanaPlugin(BeetsPlugin):
             cover_art_url = None
         if item["label"] is not None:
             label = item["label"]
-        artists = item["artists"]
+        artists = self.get_artist(item["artists"])[0]
         gaana_artist_seokey = item["artist_seokeys"]
-        artist_id = item["artist_ids"]
+        artist_id = self.get_artist(item["artist_ids"])[1]
+        print(artist_id)
         songs = item["tracks"]
         gaana_play_count = self.parse_count(item["play_count"])
         gaana_fav_count = self.parse_count(item["favorite_count"])
@@ -235,6 +236,7 @@ class GaanaPlugin(BeetsPlugin):
         else:
             length = None
         artist = track_data['artists']
+        artist, artist_id = self.get_artist(track_data['artists'], track_data['artist_ids'])
         if track_data['popularity']:
             play_count = int(track_data['popularity'].split("~")[0])
         elif track_data['play_count']:
