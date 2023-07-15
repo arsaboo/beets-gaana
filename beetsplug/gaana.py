@@ -187,9 +187,10 @@ class GaanaPlugin(BeetsPlugin):
             cover_art_url = None
         if item["label"] is not None:
             label = item["label"]
-        artists = self.get_artist(item["artists"])[0]
+        artists = MetadataSourcePlugin.get_artist(item["artists"])[0]
+        print(artists)
         gaana_artist_seokey = item["artist_seokeys"]
-        artist_id = self.get_artist(item["artist_ids"])[1]
+        artist_id = MetadataSourcePlugin.get_artist(item["artist_ids"])[1]
         print(artist_id)
         songs = item["tracks"]
         gaana_play_count = self.parse_count(item["play_count"])
