@@ -187,7 +187,7 @@ class GaanaPlugin(BeetsPlugin):
             cover_art_url = None
         if item["label"] is not None:
             label = item["label"]
-        artists = MetadataSourcePlugin.get_artist(item["artists"])[0]
+        artists = MetadataSourcePlugin.get_artist(item, id_key='artists_ids', name_key='artists')[0]
         print(artists)
         gaana_artist_seokey = item["artist_seokeys"]
         artist_id = MetadataSourcePlugin.get_artist(item["artist_ids"])[1]
