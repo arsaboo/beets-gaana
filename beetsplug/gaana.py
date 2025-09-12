@@ -327,7 +327,6 @@ class GaanaPlugin(BeetsPlugin):
                 return song_list
             for song in songs:
                 # Find and store the song title
-                self._log.debug("Found song: {0}", song)
                 title = song['title'].replace("&quot;", "\"")
                 artist = song['artists']
                 album = song['album'].replace("&quot;", "\"")
