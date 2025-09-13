@@ -106,7 +106,6 @@ class GaanaPlugin(BeetsPlugin):
                 'Processed album {} of {}: {}'.format(i+1,
                                                       tot_alb,
                                                       album["title"]))
-        print(albums)
         return albums
 
     def get_tracks(self, query):
@@ -244,7 +243,6 @@ class GaanaPlugin(BeetsPlugin):
         if isinstance(track_data['favorite_count'], int):
             gaana_track_fav_count = track_data['favorite_count']
         else:
-            print(f"parsing {track_data['favorite_count']}")
             gaana_track_fav_count = self.parse_count(
                 track_data['favorite_count'])
         # Get album information for Gaana tracks
