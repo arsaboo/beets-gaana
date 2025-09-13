@@ -16,15 +16,14 @@ from beets.plugins import BeetsPlugin, get_distance
 from PIL import Image
 
 
-def extend_reimport_fresh_fields_item():
+def extend_reimport_fresh_fields_item() -> None:
     """Extend the REIMPORT_FRESH_FIELDS_ITEM list so that these fields
     are updated during reimport."""
-
     importer.REIMPORT_FRESH_FIELDS_ITEM.extend([
         'gaana_track_id', 'gaana_track_seokey', 'gaana_track_popularity',
         'gaana_genres', 'gaana_track_fav_count', 'gaana_fav_count',
-        'gaana_track_popularity', 'gaana_updated'])
-
+        'gaana_updated'
+    ])
 
 class GaanaPlugin(BeetsPlugin):
     data_source = 'Gaana'
@@ -77,7 +76,7 @@ class GaanaPlugin(BeetsPlugin):
             config=self.config
         )
 
-    def get_albums(self, query):
+    def get_albums(self, query: str) -> list:
         """Returns a list of AlbumInfo objects for a Gaana search query.
         """
         # Strip non-word characters from query. Things like "!" and "-" can
@@ -92,9 +91,12 @@ class GaanaPlugin(BeetsPlugin):
         self._log.debug('Searching Gaana for Album: {}', query)
         url = f"{self.baseurl}{self.ALBUM_SEARCH}\"{query}\""
         try:
-            data = requests.get(url, timeout=30).json()
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            data = response.json()
         except Exception as e:
-            self._log.debug('Album Search Error: {}'.format(e))
+            self._log.error('Album Search Error: {}'.format(e))
+            return []
         tot_alb = len(data)
         for i, album in enumerate(data):
             seokey = album["seokey"]
@@ -108,7 +110,7 @@ class GaanaPlugin(BeetsPlugin):
                                                       album["title"]))
         return albums
 
-    def get_tracks(self, query):
+    def get_tracks(self, query: str) -> list:
         """Returns a list of TrackInfo objects for a Gaana search query.
         """
         # Strip non-word characters from query. Things like "!" and "-" can
@@ -123,9 +125,12 @@ class GaanaPlugin(BeetsPlugin):
         self._log.debug('Searching Gaana for track: {}', query)
         url = f"{self.baseurl}{self.SONG_SEARCH}\"{query}\""
         try:
-            data = requests.get(url, timeout=30).json()
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            data = response.json()
         except Exception as e:
-            self._log.debug('Invalid track Search Error: {}'.format(e))
+            self._log.error('Invalid track Search Error: {}'.format(e))
+            return []
         tot_trk = len(data)
         for i, track in enumerate(data):
             seokey = track["seokey"]
@@ -168,23 +173,26 @@ class GaanaPlugin(BeetsPlugin):
             self._log.debug('Gaana Item Search Error: {}'.format(e))
             return []
 
-    def get_album_info(self, item):
+    def get_album_info(self, item: dict) -> AlbumInfo:
         """Returns an AlbumInfo object for a Gaana album.
         """
         album = item.get("title").replace("&quot;", "\"")
         gaana_album_id = item["album_id"]
         gaana_seokey = item["seokey"]
-        if item["release_date"] is not None:
+        year, month, day = None, None, None
+        label = None
+        if item.get("release_date"):
             releasedate = item["release_date"].split("-")
-            year = int(releasedate[0])
-            month = int(releasedate[1])
-            day = int(releasedate[2])
+            if len(releasedate) == 3:
+                year = int(releasedate[0])
+                month = int(releasedate[1])
+                day = int(releasedate[2])
         url = item["images"]["urls"]["large_artwork"]
         if self.is_valid_image_url(url):
             cover_art_url = url
         else:
             cover_art_url = None
-        if item["label"] is not None:
+        if item.get("label"):
             label = item["label"]
         artists = item["artists"]
         gaana_artist_seokey = item["artist_seokeys"]
@@ -226,7 +234,7 @@ class GaanaPlugin(BeetsPlugin):
                          gaana_fav_count=gaana_fav_count,
                          )
 
-    def _get_track(self, track_data):
+    def _get_track(self, track_data: dict) -> TrackInfo:
         """Convert a Gaana song object to a TrackInfo object.
         """
         if track_data['duration']:
@@ -263,7 +271,7 @@ class GaanaPlugin(BeetsPlugin):
             gaana_updated=time.time(),
         )
 
-    def album_for_id(self, release_id):
+    def album_for_id(self, release_id: str) -> AlbumInfo | None:
         """Fetches an album by its Gaana ID and returns an AlbumInfo object
         """
         if 'gaana.com/album/' not in release_id:
@@ -271,55 +279,79 @@ class GaanaPlugin(BeetsPlugin):
         self._log.debug('Searching for album {0}', release_id)
         seokey = release_id.split("/")[-1]
         album_url = f"{self.baseurl}{self.ALBUM_DETAILS}{seokey}"
-        album_details = requests.get(album_url, timeout=30).json()
+        try:
+            response = requests.get(album_url, timeout=30)
+            response.raise_for_status()
+            album_details = response.json()
+        except Exception as e:
+            self._log.error('Error fetching album by ID: {}'.format(e))
+            return None
         return self.get_album_info(album_details[0])
 
-    def track_for_id(self, track_id=None):
+    def track_for_id(self, track_id: str = None) -> TrackInfo | None:
         """Fetches a track by its Gaana ID and returns a TrackInfo object
         """
         if track_id is not None and 'gaana.com/song/' in track_id:
             self._log.debug('Searching for track {0}', track_id)
             seokey = track_id.split("/")[-1]
             song_url = f"{self.baseurl}{self.SONG_DETAILS}{seokey}"
-            song_details = requests.get(song_url, timeout=30).json()
+            try:
+                response = requests.get(song_url, timeout=30)
+                response.raise_for_status()
+                song_details = response.json()
+            except Exception as e:
+                self._log.error('Error fetching track by ID: {}'.format(e))
+                return None
             return self._get_track(song_details[0])
         else:
             return None
 
-    def is_valid_image_url(self, url):
+    def is_valid_image_url(self, url: str) -> bool:
         try:
             response = requests.get(url)
+            response.raise_for_status()
             Image.open(BytesIO(response.content))
             return True
         except Exception:
             return False
 
-    def parse_count(self, str) -> int:
+    def parse_count(self, str_val: str) -> int:
         # this function parses the play count from the string.
-        # The string usually has numbers such as 55K+ or 1.2M+ or <100
-        # this function converts the string to an integer
-        if str is None:
+        if not str_val:
             return 0
-        if str[0] == '<':
-            str = str[1:]
-        if str[-1] == '+':
-            str = str[:-1]
-        if str[-1] == 'K':
-            return int(float(str[:-1]) * 1000)
-        if str[-1] == 'M':
-            return int(float(str[:-1]) * 1000000)
-        return int(str)
+        str_val = str(str_val).strip()
+        if str_val.startswith('<'):
+            str_val = str_val[1:]
+        if str_val.endswith('+'):
+            str_val = str_val[:-1]
+        if str_val.endswith('K'):
+            try:
+                return int(float(str_val[:-1]) * 1000)
+            except ValueError:
+                return 0
+        if str_val.endswith('M'):
+            try:
+                return int(float(str_val[:-1]) * 1000000)
+            except ValueError:
+                return 0
+        try:
+            return int(str_val)
+        except ValueError:
+            return 0
 
-    def import_gaana_playlist(self, url):
+    def import_gaana_playlist(self, url: str) -> list:
         """This function returns a list of tracks in a Gaana playlist."""
         song_list = []
         if "/playlist/" not in url:
             self._log.error("Invalid Gaana playlist URL: {0}", url)
+            return song_list
         else:
             seokey = url.split("/")[-1]
             plst_url = f"{self.baseurl}{self.PLAYLIST_DETAILS}{seokey}"
             try:
-                songs = requests.get(plst_url, timeout=30).json()
+                response = requests.get(plst_url, timeout=30)
+                response.raise_for_status()
+                songs = response.json()
             except Exception as e:
                 self._log.error("Error fetching playlist: {0}", e)
                 return song_list
