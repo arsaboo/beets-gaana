@@ -6,14 +6,15 @@ import collections
 import re
 import time
 from io import BytesIO
+from typing import Sequence
 
 import requests
+from PIL import Image
 from beets import importer
-from beets.autotag.hooks import AlbumInfo, TrackInfo
-from beets.autotag.distance import Distance
+from beets.autotag.hooks import AlbumInfo, TrackInfo, Item
 from beets.dbcore import types
 from beets.library import DateType
-from beets.plugins import BeetsPlugin
+from beets.plugins import MetadataSourcePlugin
 
 
 def extend_reimport_fresh_fields_item() -> None:
@@ -25,7 +26,7 @@ def extend_reimport_fresh_fields_item() -> None:
         'gaana_updated'
     ])
 
-class GaanaPlugin(BeetsPlugin):
+class GaanaPlugin(MetadataSourcePlugin):
     data_source = 'Gaana'
 
     item_types = {
@@ -56,23 +57,7 @@ class GaanaPlugin(BeetsPlugin):
         except Exception as e:
             self._log.error('Gaana baseurl not set: {}'.format(e))
 
-    def album_distance(self, items, album_info, mapping):
-
-        """Returns the album distance.
-        """
-        dist = Distance()
-        if album_info.data_source == 'Gaana':
-            dist.add('source', self.config['source_weight'].as_number())
-        return dist
-
-    def track_distance(self, item, track_info):
-        """Returns the Gaana source weight and the maximum source weight
-        for individual tracks.
-        """
-        dist = Distance()
-        if track_info.data_source == 'Gaana':
-            dist.add('source', self.config['source_weight'].as_number())
-        return dist
+    
 
     def get_albums(self, query: str) -> list:
         """Returns a list of AlbumInfo objects for a Gaana search query.
@@ -143,21 +128,21 @@ class GaanaPlugin(BeetsPlugin):
                                                       track["title"]))
         return tracks
 
-    def candidates(self, items, artist, release, va_likely, extra_tags=None):
+    def candidates(self, items: Sequence[Item], artist: str, album: str, va_likely: bool):
         """Returns a list of AlbumInfo objects for Gaana search results
         matching release and artist (if not various).
         """
         if va_likely:
-            query = release
+            query = album
         else:
-            query = f'{release} {artist}'
+            query = f'{album} {artist}'
         try:
             return self.get_albums(query)
         except Exception as e:
             self._log.debug('Gaana Search Error: {}'.format(e))
             return []
 
-    def item_candidates(self, item, artist, title):
+    def item_candidates(self, item: Item, artist: str, title: str):
         """Returns a list of TrackInfo objects for Gaana search results
         matching title and artist.
         """
@@ -269,13 +254,13 @@ class GaanaPlugin(BeetsPlugin):
             gaana_updated=time.time(),
         )
 
-    def album_for_id(self, release_id: str) -> AlbumInfo | None:
+    def album_for_id(self, album_id: str) -> AlbumInfo | None:
         """Fetches an album by its Gaana ID and returns an AlbumInfo object
         """
-        if 'gaana.com/album/' not in release_id:
+        if 'gaana.com/album/' not in album_id:
             return None
-        self._log.debug('Searching for album {0}', release_id)
-        seokey = release_id.split("/")[-1]
+        self._log.debug('Searching for album {0}', album_id)
+        seokey = album_id.split("/")[-1]
         album_url = f"{self.baseurl}{self.ALBUM_DETAILS}{seokey}"
         try:
             response = requests.get(album_url, timeout=30)
@@ -286,10 +271,10 @@ class GaanaPlugin(BeetsPlugin):
             return None
         return self.get_album_info(album_details[0])
 
-    def track_for_id(self, track_id: str = None) -> TrackInfo | None:
+    def track_for_id(self, track_id: str) -> TrackInfo | None:
         """Fetches a track by its Gaana ID and returns a TrackInfo object
         """
-        if track_id is not None and 'gaana.com/song/' in track_id:
+        if 'gaana.com/song/' in track_id:
             self._log.debug('Searching for track {0}', track_id)
             seokey = track_id.split("/")[-1]
             song_url = f"{self.baseurl}{self.SONG_DETAILS}{seokey}"
