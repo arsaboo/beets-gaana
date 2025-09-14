@@ -14,8 +14,6 @@ from beets.autotag.distance import Distance
 from beets.dbcore import types
 from beets.library import DateType
 from beets.plugins import BeetsPlugin
-from beets.autotag.distance import track_distance
-from PIL import Image
 
 
 def extend_reimport_fresh_fields_item() -> None:
@@ -68,11 +66,10 @@ class GaanaPlugin(BeetsPlugin):
         return dist
 
     def track_distance(self, item, track_info):
-
         """Returns the Gaana source weight and the maximum source weight
         for individual tracks.
         """
-        dist = track_distance(item, track_info)
+        dist = Distance()
         if track_info.data_source == 'Gaana':
             dist.add('source', self.config['source_weight'].as_number())
         return dist
