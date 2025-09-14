@@ -11,10 +11,10 @@ from typing import Sequence
 import requests
 from PIL import Image
 from beets import importer
-from beets.autotag.hooks import AlbumInfo, TrackInfo, Item
+from beets.autotag.hooks import AlbumInfo, TrackInfo
 from beets.dbcore import types
 from beets.library import DateType
-from beets.plugins import MetadataSourcePlugin
+from beets.metadata_plugins import MetadataSourcePlugin
 
 
 def extend_reimport_fresh_fields_item() -> None:
@@ -128,7 +128,7 @@ class GaanaPlugin(MetadataSourcePlugin):
                                                       track["title"]))
         return tracks
 
-    def candidates(self, items: Sequence[Item], artist: str, album: str, va_likely: bool):
+    def candidates(self, items, artist: str, album: str, va_likely: bool):
         """Returns a list of AlbumInfo objects for Gaana search results
         matching release and artist (if not various).
         """
@@ -142,7 +142,7 @@ class GaanaPlugin(MetadataSourcePlugin):
             self._log.debug('Gaana Search Error: {}'.format(e))
             return []
 
-    def item_candidates(self, item: Item, artist: str, title: str):
+    def item_candidates(self, item, artist: str, title: str):
         """Returns a list of TrackInfo objects for Gaana search results
         matching title and artist.
         """
