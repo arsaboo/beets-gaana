@@ -93,7 +93,7 @@ class GaanaPlugin(MetadataSourcePlugin):
                                                       album["title"]))
         return albums
 
-    def get_tracks(self, query: str) -> list:
+    def get_tracks(self, query: str) -> list[TrackInfo]:
         """Returns a list of TrackInfo objects for a Gaana search query.
         """
         # Strip non-word characters from query. Things like "!" and "-" can
