@@ -128,7 +128,7 @@ class GaanaPlugin(MetadataSourcePlugin):
                                                       track["title"]))
         return tracks
 
-    def candidates(self, items, artist: str, album: str, va_likely: bool):
+    def candidates(self, items, artist: str, album: str, va_likely: bool) -> list[AlbumInfo]:
         """Returns a list of AlbumInfo objects for Gaana search results
         matching album and artist (if not various).
         """
