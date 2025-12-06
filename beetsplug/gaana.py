@@ -130,7 +130,7 @@ class GaanaPlugin(MetadataSourcePlugin):
 
     def candidates(self, items, artist: str, album: str, va_likely: bool):
         """Returns a list of AlbumInfo objects for Gaana search results
-        matching release and artist (if not various).
+        matching album and artist (if not various).
         """
         if va_likely:
             query = album
