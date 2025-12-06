@@ -163,7 +163,6 @@ class GaanaPlugin(MetadataSourcePlugin):
         gaana_album_id = item["album_id"]
         gaana_seokey = item["seokey"]
         year, month, day = None, None, None
-        label = None
         if item.get("release_date"):
             releasedate = item["release_date"].split("-")
             if len(releasedate) == 3:
@@ -178,8 +177,7 @@ class GaanaPlugin(MetadataSourcePlugin):
             cover_art_url = url
         else:
             cover_art_url = None
-        if item.get("label"):
-            label = item["label"]
+        label = item.get("label")
         artists = item["artists"]
         gaana_artist_seokey = item["artist_seokeys"]
         artist_id = item["artist_ids"]
@@ -301,28 +299,28 @@ class GaanaPlugin(MetadataSourcePlugin):
         except Exception:
             return False
 
-    def parse_count(self, str_val: str) -> int:
+    def parse_count(self, count_str: str) -> int:
         # Parses play count strings (e.g., '55K+', '1.2M+', '<100') and returns the integer value,
         # or 0 if parsing fails.
-        if not str_val:
+        if not count_str:
             return 0
-        str_val = str(str_val).strip()
-        if str_val.startswith('<'):
-            str_val = str_val[1:]
-        if str_val.endswith('+'):
-            str_val = str_val[:-1]
-        if str_val.endswith('K'):
+        count_str = str(count_str).strip()
+        if count_str.startswith('<'):
+            count_str = count_str[1:]
+        if count_str.endswith('+'):
+            count_str = count_str[:-1]
+        if count_str.endswith('K'):
             try:
-                return int(float(str_val[:-1]) * 1000)
+                return int(float(count_str[:-1]) * 1000)
             except ValueError:
                 return 0
-        if str_val.endswith('M'):
+        if count_str.endswith('M'):
             try:
-                return int(float(str_val[:-1]) * 1000000)
+                return int(float(count_str[:-1]) * 1000000)
             except ValueError:
                 return 0
         try:
-            return int(str_val)
+            return int(count_str)
         except ValueError:
             return 0
 
@@ -336,6 +334,8 @@ class GaanaPlugin(MetadataSourcePlugin):
             seokey = url.split("/")[-1]
             plst_url = f"{self.baseurl}{self.PLAYLIST_DETAILS}{seokey}"
             try:
+                # Playlist requests may involve a large number of tracks and more data,
+                # so we use a longer timeout (60 seconds) compared to other API calls.
                 response = requests.get(plst_url, timeout=60)
                 response.raise_for_status()
                 songs = response.json()
