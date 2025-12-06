@@ -294,7 +294,7 @@ class GaanaPlugin(MetadataSourcePlugin):
 
     def is_valid_image_url(self, url: str) -> bool:
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=30)
             response.raise_for_status()
             Image.open(BytesIO(response.content))
             return True
