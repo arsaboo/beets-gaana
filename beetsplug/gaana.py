@@ -59,7 +59,7 @@ class GaanaPlugin(MetadataSourcePlugin):
 
 
 
-    def get_albums(self, query: str) -> list:
+    def get_albums(self, query: str) -> list[AlbumInfo]:
         """Returns a list of AlbumInfo objects for a Gaana search query.
         """
         # Strip non-word characters from query. Things like "!" and "-" can
