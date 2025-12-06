@@ -57,7 +57,7 @@ class GaanaPlugin(MetadataSourcePlugin):
         except Exception as e:
             self._log.error('Gaana baseurl not set: {}'.format(e))
 
-    
+
 
     def get_albums(self, query: str) -> list:
         """Returns a list of AlbumInfo objects for a Gaana search query.
@@ -332,7 +332,7 @@ class GaanaPlugin(MetadataSourcePlugin):
             seokey = url.split("/")[-1]
             plst_url = f"{self.baseurl}{self.PLAYLIST_DETAILS}{seokey}"
             try:
-                response = requests.get(plst_url, timeout=30)
+                response = requests.get(plst_url, timeout=60)
                 response.raise_for_status()
                 songs = response.json()
             except Exception as e:
