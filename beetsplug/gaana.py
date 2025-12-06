@@ -302,7 +302,8 @@ class GaanaPlugin(MetadataSourcePlugin):
             return False
 
     def parse_count(self, str_val: str) -> int:
-        # this function parses the play count from the string.
+        # Parses play count strings (e.g., '55K+', '1.2M+', '<100') and returns the integer value,
+        # or 0 if parsing fails.
         if not str_val:
             return 0
         str_val = str(str_val).strip()
