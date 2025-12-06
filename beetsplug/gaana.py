@@ -6,7 +6,6 @@ import collections
 import re
 import time
 from io import BytesIO
-from typing import Sequence
 
 import requests
 from PIL import Image
