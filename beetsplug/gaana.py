@@ -142,7 +142,7 @@ class GaanaPlugin(MetadataSourcePlugin):
             self._log.debug('Gaana Search Error: {}'.format(e))
             return []
 
-    def item_candidates(self, item, artist: str, title: str):
+    def item_candidates(self, item, artist: str, title: str) -> list[TrackInfo]:
         """Returns a list of TrackInfo objects for Gaana search results
         matching title and artist.
         """
