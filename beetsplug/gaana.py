@@ -167,9 +167,12 @@ class GaanaPlugin(MetadataSourcePlugin):
         if item.get("release_date"):
             releasedate = item["release_date"].split("-")
             if len(releasedate) == 3:
-                year = int(releasedate[0])
-                month = int(releasedate[1])
-                day = int(releasedate[2])
+                try:
+                    year = int(releasedate[0])
+                    month = int(releasedate[1])
+                    day = int(releasedate[2])
+                except (ValueError, TypeError):
+                    year, month, day = None, None, None
         url = item["images"]["urls"]["large_artwork"]
         if self.is_valid_image_url(url):
             cover_art_url = url
